@@ -1,12 +1,26 @@
 {% extends 'index.html' %}
 
 {% block listado_clientes %}
-    <h2>Listado de Clientes</h2>
-    <ul>
-        {% for cliente in clientes %}
-            <li><a href="">{{cliente.nombre}} {{cliente.apellido}}</a></li>
-        {% endfor %}
-    </ul>
+    <h2>Listado de Clientes activos</h2>
+    <table border="1">
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Acciones</th>
+        </tr>
+        <tbody>
+            {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente.nombre }}</td>
+                    <td>{{ cliente.apellido }}</td>
+                    <td>
+                        <a href="{% url 'editar_cliente' cliente.pk %}">Editar</a>
+                        <a href="{% url 'baja_cliente' cliente.pk %}">Eliminar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     {% if is_paginated %}
         <div>
