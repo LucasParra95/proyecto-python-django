@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+
+{% block listado_clientes %}
+    <h2>Listado de Clientes</h2>
+    <ul>
+        {% for cliente in clientes %}
+            <li><a href="">{{cliente.nombre}} {{cliente.apellido}}</a></li>
+        {% endfor %}
+    </ul>
+
+    {% if is_paginated %}
+        <div>
+            {% if page_obj.has_previous %}
+                <a href="?page={{page_obj.previous_page_number}}">Anterior</a>
+            {% endif %}
+            <span>Página {{page_obj.number}} de {{page_obj.paginator.num_pages}}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{page_obj.next_page_number}}">Siguiente</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock listado_clientes %}
