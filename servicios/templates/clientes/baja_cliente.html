@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+{% block baja_cliente %}    
+    <h2>Confirmar Baja de Cliente</h2>
+
+    <p>¿Estás seguro de que deseas dar de baja a <strong>{{ cliente_nombre }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Sí, dar de baja</button>
+        <a href="{% url 'listar_clientes' %}">Cancelar</a>
+    </form>
+{% endblock %}
