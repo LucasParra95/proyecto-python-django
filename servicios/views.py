@@ -7,7 +7,7 @@ from .forms import ClienteForm
 # Create your views here.
 
 class ClienteListView(ListView):
-    """Vista para listar todos los clientes."""
+    """Vista para listar todos los clientes activos."""
     model = Cliente
     template_name = 'clientes/listado_clientes.html'
     context_object_name = 'clientes'
@@ -88,7 +88,7 @@ class ClienteRestoreView(SuccessMessageMixin, UpdateView):
     model = Cliente
     fields = []
     template_name = 'clientes/restaurar_cliente.html'
-    success_url = reverse_lazy('listar_inactivos')
+    success_url = reverse_lazy('listar_clientes_inactivos')
     success_message = 'Cliente restaurado correctamente.'
 
     def form_valid(self, form):
