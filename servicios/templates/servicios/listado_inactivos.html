@@ -1,22 +1,24 @@
-{% extends 'index_cliente.html' %}
+{% extends 'index_servicio.html' %}
 
-{% block listado_clientes_inactivos %}
-    <h2>Listado de Clientes Inactivos</h2>
+{% block listado_inactivos %}
+    <h2>Listado de Servicios Inactivos</h2>
     <table border="1">
         <thead>
             <tr>
                 <th>Nombre</th>
-                <th>Apellido</th>
+                <th>Descripcion</th>
+                <th>Precio</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            {% for cliente in clientes %}
+            {% for servicio in servicios %}
             <tr>
-                <td>{{ cliente.nombre }}</td>
-                <td>{{ cliente.apellido }}</td>
+                <td>{{ servicio.nombre }}</td>
+                <td>{{ servicio.descripcion }}</td>
+                <td>${{ servicio.precio|floatformat:2 }}</td> 
                 <td>
-                    <a href="{% url 'restaurar_cliente' cliente.pk %}">Restaurar</a>
+                    <a href="{% url 'restaurar_servicio' servicio.pk %}">Restaurar</a>
                 </td>
             </tr>
             {% endfor %}
@@ -38,4 +40,4 @@
             {% endif %}
         </div>
     {% endif %}
-{% endblock %}
+{% endblock listado_inactivos %}
