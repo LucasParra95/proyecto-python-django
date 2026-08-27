@@ -1,0 +1,13 @@
+{% extends 'index_servicio.html' %}
+
+{% block baja_servicio %}    
+    <h2>Confirmar Baja de Servicio</h2>
+
+    <p>¿Estás seguro de que deseas dar de baja al servicio <strong>{{ servicio_nombre }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Sí, dar de baja</button>
+        <a href="{% url 'listar_servicios' %}">Cancelar</a>
+    </form>
+{% endblock baja_servicio %}
