@@ -1,11 +1,26 @@
 {% extends 'index_cliente.html' %}
 
 {% block restaurar_cliente %}
-    <h2>Restaurar Cliente</h2>
-    <p>¿Está seguro de que desea restaurar al cliente <strong>"{{ cliente.nombre }} {{ cliente.apellido }}"</strong>?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Restaurar</button>
-        <a href="{% url 'listar_clientes_inactivos' %}">Cancelar</a>
-    </form>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-success">
+                <div class="card-header" style="background-color: #28a745;">
+                    <h2 class="mb-0 text-white">Confirmar Restauración</h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead">¿Está seguro de que desea restaurar al cliente?</p>
+                    <p><strong style="color: var(--accent-cta); font-size: 1.1rem;">{{ cliente.nombre }} {{ cliente.apellido }}</strong></p>
+                    <p class="text-muted">El cliente volverá a estar activo en el sistema.</p>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">Restaurar Cliente</button>
+                            <a href="{% url 'listar_clientes_inactivos' %}" class="btn btn-secondary">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

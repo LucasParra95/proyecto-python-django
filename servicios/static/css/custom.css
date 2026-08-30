@@ -1,0 +1,225 @@
+:root {
+  /* Paleta de marca */
+  --primary-dark: #31493C;
+  --secondary-warm: #C4A484;
+  --accent-cta: #A46218;
+  --bg-light: #F4F6F4;
+  --text-dark: #1A231E;
+  
+  /* Derivados para mejor armonía */
+  --primary-light: #4a6b56;
+  --primary-lighter: #6b8a7a;
+  --secondary-darker: #a68560;
+  --accent-hover: #8b5014;
+}
+
+/* Override Bootstrap */
+body {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Colores principales */
+.btn-primary {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary-light);
+}
+
+.btn-accent {
+  background-color: var(--accent-cta);
+  border-color: var(--accent-cta);
+  color: white;
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--primary-dark) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--secondary-warm) !important;
+}
+
+.nav-link {
+  color: var(--bg-light) !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--secondary-warm) !important;
+}
+
+/* Tablas */
+.table {
+  background-color: white;
+}
+
+.table thead {
+  background-color: var(--primary-dark);
+  color: white;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(49, 73, 60, 0.05);
+}
+
+.table th {
+  border-color: var(--primary-dark);
+}
+
+/* Formularios */
+.form-label {
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+.form-control:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 0.2rem rgba(49, 73, 60, 0.25);
+}
+
+.form-control {
+  border-color: #ddd;
+}
+
+/* Cards */
+.card {
+  border-color: var(--primary-dark);
+  border-radius: 8px;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-dark);
+}
+
+.card-header {
+  background-color: var(--primary-dark);
+}
+
+.card-header h2 {
+  color: white;
+}
+
+/* Enlaces */
+a {
+  color: var(--accent-cta);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* Contenedor principal */
+.container {
+  max-width: 1200px;
+}
+
+/* Espaciado */
+.page-section {
+  padding: 3rem 0;
+}
+
+/* Formularios - mejorado para form.as_p */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group p {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  color: var(--text-dark);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group input[type="password"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 0.2rem rgba(49, 73, 60, 0.25);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-group ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.form-group ul li {
+  margin-bottom: 0.5rem;
+}
+
+.form-group input[type="checkbox"],
+.form-group input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  accent-color: var(--primary-dark);
+}
+
+/* Errores del formulario */
+.errorlist {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+
+.errorlist li {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.form-group p.error {
+  color: #dc3545;
+}
+
+/* Ayuda de campos */
+.form-text, .helptext {
+  display: block;
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}

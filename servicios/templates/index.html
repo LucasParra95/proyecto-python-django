@@ -1,18 +1,39 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{titulo}}</title>
 </head>
 <body>
-    {% block clientes %}
-    {% endblock %}
-
-    {% block servicios %}
-    {% endblock %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand">🎉 Servicios de Fiesta</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'listar_servicios' %}">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'listar_clientes' %}">Clientes</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main class="page-section">
+        <div class="container">
+        {% block clientes %}
+        {% endblock %}
+    
+        {% block servicios %}
+        {% endblock %}
+        </div>
+    </main>
 </body>
 </html>
