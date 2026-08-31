@@ -1,3 +1,18 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Cliente, Servicio
+
+
+@admin.register(Servicio) #registra el modelo en el panel del admin
+class ServicioAdmin(admin.ModelAdmin):
+    list_display = ("nombre" , "precio", "activo") # las columnas que se van a ver. descripcion no se si hace falta
+    list_filter = ("activo",) # filtro. Se puede probar la baja logica asi
+    search_fields = ("nombre",) # habilita la barra de busqueda
+    ordering = ("nombre",) # solo ordena
+
+@admin.register(Cliente)
+class ClienteAdmin(admin.ModelAdmin):
+    list_display = ("nombre" , "apellido", "activo")
+    list_filter = ("activo",)
+    search_fields = ("nombre", "apellido")
+    ordering = ("apellido", "nombre")

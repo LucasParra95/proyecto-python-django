@@ -1,0 +1,43 @@
+{% extends 'index_servicio.html' %}
+
+{% block listado_inactivos %}
+    <h2>Listado de Servicios Inactivos</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for servicio in servicios %}
+            <tr>
+                <td>{{ servicio.nombre }}</td>
+                <td>{{ servicio.descripcion }}</td>
+                <td>${{ servicio.precio|floatformat:2 }}</td> 
+                <td>
+                    <a href="{% url 'restaurar_servicio' servicio.pk %}">Restaurar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page=1">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock listado_inactivos %}

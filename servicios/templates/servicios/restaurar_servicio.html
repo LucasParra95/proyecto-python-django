@@ -1,0 +1,11 @@
+{% extends 'index_servicio.html' %}
+
+{% block restaurar_servicio %}
+    <h2>Restaurar Servicio</h2>
+    <p>¿Está seguro de que desea restaurar al servicio <strong>"{{ servicio.nombre }}"</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Restaurar</button>
+        <a href="{% url 'listar_servicios_inactivos' %}">Cancelar</a>
+    </form>
+{% endblock restaurar_servicio %}

@@ -1,0 +1,41 @@
+{% extends 'index_cliente.html' %}
+
+{% block listado_clientes_inactivos %}
+    <h2>Listado de Clientes Inactivos</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.apellido }}</td>
+                <td>
+                    <a href="{% url 'restaurar_cliente' cliente.pk %}">Restaurar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_paginated %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page=1">Primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            {% endif %}
+
+            <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

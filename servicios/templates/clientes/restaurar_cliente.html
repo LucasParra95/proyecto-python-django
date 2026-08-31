@@ -1,0 +1,11 @@
+{% extends 'index_cliente.html' %}
+
+{% block restaurar_cliente %}
+    <h2>Restaurar Cliente</h2>
+    <p>¿Está seguro de que desea restaurar al cliente <strong>"{{ cliente.nombre }} {{ cliente.apellido }}"</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Restaurar</button>
+        <a href="{% url 'listar_clientes_inactivos' %}">Cancelar</a>
+    </form>
+{% endblock %}

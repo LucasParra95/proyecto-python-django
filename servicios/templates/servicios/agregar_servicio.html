@@ -1,0 +1,10 @@
+{% extends 'index_Servicio.html' %}
+
+{% block form_servicio %}
+    <h2>Agregar Servicio</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+{% endblock form_servicio %}
