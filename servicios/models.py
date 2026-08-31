@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 class Cliente(models.Model):
     """Modelo para gestionar clientes"""
@@ -46,3 +47,31 @@ class Servicio(models.Model):
     activo = models.BooleanField(
         default=True,
         help_text="Indica si el servicio esta activo")
+
+    class Empleado(models.Model):
+    """Modelo para gestionar Empleados"""
+    nombre = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+        help_text="Nombre del empleado"
+    )
+    apellido = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+        help_text="Apellido del empleado"
+    )
+    numero_legajo = models.IntegerField(
+        unique=True,
+        blank=False,
+        null=False,
+        help_text="Número de legajo único del empleado"
+    )
+    activo = models.BooleanField(
+        default=True,
+        help_text="Indica si el empleado está activo"
+    )
+
+    def __str__(self):
+        return f"{self.nombre} {self.apellido} (Legajo: {self.numero_legajo})"
