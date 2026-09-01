@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cliente, Servicio
+from .models import Cliente, Servicio, Empleado, Coordinador
 
 
 @admin.register(Servicio) #registra el modelo en el panel del admin
@@ -14,5 +14,19 @@ class ServicioAdmin(admin.ModelAdmin):
 class ClienteAdmin(admin.ModelAdmin):
     list_display = ("nombre" , "apellido", "activo")
     list_filter = ("activo",)
+    search_fields = ("nombre", "apellido")
+    ordering = ("apellido", "nombre")
+
+@admin.register(Empleado)
+class EmpleadoAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "apellido", "numero_legajo", "activo")
+    list_filter = ("activo",)
+    search_fields = ("nombre", "apellido")
+    ordering = ("apellido", "nombre")
+
+@admin.register(Coordinador)
+class CoordinadorAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "apellido", "numero_documento", "activo")
+    list_filter = ("activo", "numero_documento")
     search_fields = ("nombre", "apellido")
     ordering = ("apellido", "nombre")
