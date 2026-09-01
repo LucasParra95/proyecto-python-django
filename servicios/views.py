@@ -1,8 +1,8 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
-from .models import Cliente, Servicio
-from .forms import ClienteForm, ServicioForm
+from .models import Cliente, Servicio, Empleado, Coordinador
+from .forms import ClienteForm, ServicioForm, EmpleadoForm, CoordinadorForm
 
 
 ##########CLIENTES VIEWS##########
@@ -355,5 +355,362 @@ class ServicioRestoreView(SuccessMessageMixin, UpdateView):
             'boton_texto': 'Restaurar Servicio',
             'boton_clase': 'btn-success',
             'url_cancelar': reverse('listar_servicios_inactivos'),
+        })
+        return context
+
+########## EMPLEADOS VIEWS ##########
+
+class EmpleadoListView(ListView):
+    """Vista para listar todos los empleados activos."""
+    model = Empleado
+    template_name = 'listado_generico.html'
+    context_object_name = 'items'
+    paginate_by = 20
+
+    def get_queryset(self):
+        return Empleado.objects.filter(activo=True).order_by('nombre')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'base_template': 'index_Cliente.html',  # O el index base que utilices
+            'titulo': 'Listado de Empleados Activos',
+            'boton_principal_texto': 'Agregar Empleado',
+            'boton_principal_url': reverse('crear_empleado'),
+            'boton_secundario_texto': 'Ver Empleados Inactivos',
+            'boton_secundario_url': reverse('listar_empleados_inactivos'),
+            'mensaje_vacio': 'No hay empleados activos registrados.',
+            'columnas': [
+                {'nombre': 'Nombre', 'campo': 'nombre'},
+                {'nombre': 'Apellido', 'campo': 'apellido'},
+                {'nombre': 'N° Legajo', 'campo': 'numero_legajo'},
+            ],
+            'acciones': [
+                {
+                    'texto': 'Editar',
+                    'clase': 'primary',
+                    'url_pattern': reverse('editar_empleado', kwargs={'pk': 0})[:-1],
+                },
+                {
+                    'texto': 'Eliminar',
+                    'clase': 'danger',
+                    'url_pattern': reverse('baja_empleado', kwargs={'pk': 0})[:-1],
+                },
+            ],
+        })
+        return context
+
+
+class EmpleadoCreateView(SuccessMessageMixin, CreateView):
+    """Vista para crear un nuevo empleado."""
+    model = Empleado
+    form_class = EmpleadoForm
+    template_name = 'agregar_editar.html'
+    success_url = reverse_lazy('listar_empleados')
+    success_message = 'Empleado "%(nombre)s %(apellido)s" agregado correctamente.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'base_template': 'index.html',
+            'titulo': 'Agregar Nuevo Empleado',
+            'boton_texto': 'Guardar Empleado',
+            'boton_clase': 'btn-accent',
+            'url_cancelar': reverse('listar_empleados'),
+        })
+        return context
+
+
+class EmpleadoUpdateView(SuccessMessageMixin, UpdateView):
+    """Vista para editar un empleado."""
+    model = Empleado
+    form_class = EmpleadoForm
+    template_name = 'agregar_editar.html'
+    success_url = reverse_lazy('listar_empleados')
+    success_message = 'Empleado "%(nombre)s %(apellido)s" actualizado correctamente.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Editar Empleado',
+            'boton_texto': 'Actualizar Empleado',
+            'boton_clase': 'btn-primary',
+            'url_cancelar': reverse('listar_empleados'),
+        })
+        return context
+
+
+class EmpleadoDeactivateView(SuccessMessageMixin, UpdateView):
+    """Vista para dar de baja un empleado (baja lógica)."""
+    model = Empleado
+    fields = []
+    template_name = 'confirmar_accion.html'
+    success_url = reverse_lazy('listar_empleados')
+    success_message = 'Empleado dado de baja correctamente.'
+
+    def form_valid(self, form):
+        self.object.activo = False
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        nombre_completo = f"{self.object.nombre} {self.object.apellido}"
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Confirmar Eliminación',
+            'color_alerta': 'danger',
+            'color_fondo': '#dc3545',
+            'mensaje_confirmacion': '¿Estás seguro de que deseas dar de baja al empleado?',
+            'mensaje_adicional': 'Este empleado será marcado como inactivo y podrá restaurarse más adelante.',
+            'nombre_display': nombre_completo,
+            'boton_texto': 'Sí, dar de baja',
+            'boton_clase': 'btn-danger',
+            'url_cancelar': reverse('listar_empleados'),
+        })
+        return context
+
+
+class EmpleadoListInactivateView(ListView):
+    """Vista para listar empleados inactivos."""
+    model = Empleado
+    template_name = 'listado_generico.html'
+    context_object_name = 'items'
+    paginate_by = 20
+
+    def get_queryset(self):
+        return Empleado.objects.filter(activo=False).order_by('nombre')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'base_template': 'index.html',
+            'titulo': 'Listado de Empleados Inactivos',
+            'boton_principal_texto': 'Volver a Empleados Activos',
+            'boton_principal_url': reverse('listar_empleados'),
+            'mensaje_vacio': 'No hay empleados inactivos.',
+            'columnas': [
+                {'nombre': 'Nombre', 'campo': 'nombre'},
+                {'nombre': 'Apellido', 'campo': 'apellido'},
+                {'nombre': 'N° Legajo', 'campo': 'numero_legajo'},
+            ],
+            'acciones': [
+                {
+                    'texto': 'Restaurar',
+                    'clase': 'success',
+                    'url_pattern': reverse('restaurar_empleado', kwargs={'pk': 0})[:-1],
+                },
+            ],
+        })
+        return context
+
+
+class EmpleadoRestoreView(SuccessMessageMixin, UpdateView):
+    """Vista para restaurar un empleado inactivo."""
+    model = Empleado
+    fields = []
+    template_name = 'confirmar_accion.html'
+    success_url = reverse_lazy('listar_empleados_inactivos')
+    success_message = 'Empleado restaurado correctamente.'
+
+    def form_valid(self, form):
+        self.object.activo = True
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        nombre_completo = f"{self.object.nombre} {self.object.apellido}"
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Confirmar Restauración',
+            'color_alerta': 'success',
+            'color_fondo': '#28a745',
+            'mensaje_confirmacion': '¿Está seguro de que desea restaurar el empleado?',
+            'mensaje_adicional': 'El empleado volverá a estar activo en el sistema.',
+            'nombre_display': nombre_completo,
+            'boton_texto': 'Restaurar Empleado',
+            'boton_clase': 'btn-success',
+            'url_cancelar': reverse('listar_empleados_inactivos'),
+        })
+        return context
+
+
+########## COORDINADORES VIEWS ##########
+
+class CoordinadorListView(ListView):
+    """Vista para listar todos los coordinadores activos."""
+    model = Coordinador
+    template_name = 'listado_generico.html'
+    context_object_name = 'items'
+    paginate_by = 20
+
+    def get_queryset(self):
+        return Coordinador.objects.filter(activo=True).order_by('nombre')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Listado de Coordinadores Activos',
+            'boton_principal_texto': 'Agregar Coordinador',
+            'boton_principal_url': reverse('crear_coordinador'),
+            'boton_secundario_texto': 'Ver Coordinadores Inactivos',
+            'boton_secundario_url': reverse('listar_coordinadores_inactivos'),
+            'mensaje_vacio': 'No hay coordinadores activos registrados.',
+            'columnas': [
+                {'nombre': 'Nombre', 'campo': 'nombre'},
+                {'nombre': 'Apellido', 'campo': 'apellido'},
+                {'nombre': 'N° Documento', 'campo': 'numero_documento'},
+            ],
+            'acciones': [
+                {
+                    'texto': 'Editar',
+                    'clase': 'primary',
+                    'url_pattern': reverse('editar_coordinador', kwargs={'pk': 0})[:-1],
+                },
+                {
+                    'texto': 'Eliminar',
+                    'clase': 'danger',
+                    'url_pattern': reverse('baja_coordinador', kwargs={'pk': 0})[:-1],
+                },
+            ],
+        })
+        return context
+
+
+class CoordinadorCreateView(SuccessMessageMixin, CreateView):
+    """Vista para crear un nuevo coordinador."""
+    model = Coordinador
+    form_class = CoordinadorForm
+    template_name = 'agregar_editar.html'
+    success_url = reverse_lazy('listar_coordinadores')
+    success_message = 'Coordinador "%(nombre)s %(apellido)s" agregado correctamente.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Agregar Nuevo Coordinador',
+            'boton_texto': 'Guardar Coordinador',
+            'boton_clase': 'btn-accent',
+            'url_cancelar': reverse('listar_coordinadores'),
+        })
+        return context
+
+
+class CoordinadorUpdateView(SuccessMessageMixin, UpdateView):
+    """Vista para editar un coordinador."""
+    model = Coordinador
+    form_class = CoordinadorForm
+    template_name = 'agregar_editar.html'
+    success_url = reverse_lazy('listar_coordinadores')
+    success_message = 'Coordinador "%(nombre)s %(apellido)s" actualizado correctamente.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Editar Coordinador',
+            'boton_texto': 'Actualizar Coordinador',
+            'boton_clase': 'btn-primary',
+            'url_cancelar': reverse('listar_coordinadores'),
+        })
+        return context
+
+
+class CoordinadorDeactivateView(SuccessMessageMixin, UpdateView):
+    """Vista para dar de baja un coordinador (baja lógica)."""
+    model = Coordinador
+    fields = []
+    template_name = 'confirmar_accion.html'
+    success_url = reverse_lazy('listar_coordinadores')
+    success_message = 'Coordinador dado de baja correctamente.'
+
+    def form_valid(self, form):
+        self.object.activo = False
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        nombre_completo = f"{self.object.nombre} {self.object.apellido}"
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Confirmar Eliminación',
+            'color_alerta': 'danger',
+            'color_fondo': '#dc3545',
+            'mensaje_confirmacion': '¿Estás seguro de que deseas dar de baja al coordinador?',
+            'mensaje_adicional': 'Este coordinador será marcado como inactivo y podrá restaurarse más adelante.',
+            'nombre_display': nombre_completo,
+            'boton_texto': 'Sí, dar de baja',
+            'boton_clase': 'btn-danger',
+            'url_cancelar': reverse('listar_coordinadores'),
+        })
+        return context
+
+
+class CoordinadorListInactivateView(ListView):
+    """Vista para listar coordinadores inactivos."""
+    model = Coordinador
+    template_name = 'listado_generico.html'
+    context_object_name = 'items'
+    paginate_by = 20
+
+    def get_queryset(self):
+        return Coordinador.objects.filter(activo=False).order_by('nombre')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Listado de Coordinadores Inactivos',
+            'boton_principal_texto': 'Volver a Coordinadores Activos',
+            'boton_principal_url': reverse('listar_coordinadores'),
+            'mensaje_vacio': 'No hay coordinadores inactivos.',
+            'columnas': [
+                {'nombre': 'Nombre', 'campo': 'nombre'},
+                {'nombre': 'Apellido', 'campo': 'apellido'},
+                {'nombre': 'N° Documento', 'campo': 'numero_documento'},
+            ],
+            'acciones': [
+                {
+                    'texto': 'Restaurar',
+                    'clase': 'success',
+                    'url_pattern': reverse('restaurar_coordinador', kwargs={'pk': 0})[:-1],
+                },
+            ],
+        })
+        return context
+
+
+class CoordinadorRestoreView(SuccessMessageMixin, UpdateView):
+    """Vista para restaurar un coordinador inactivo."""
+    model = Coordinador
+    fields = []
+    template_name = 'confirmar_accion.html'
+    success_url = reverse_lazy('listar_coordinadores_inactivos')
+    success_message = 'Coordinador restaurado correctamente.'
+
+    def form_valid(self, form):
+        self.object.activo = True
+        self.object.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        nombre_completo = f"{self.object.nombre} {self.object.apellido}"
+        context.update({
+            'base_template': 'index_Cliente.html',
+            'titulo': 'Confirmar Restauración',
+            'color_alerta': 'success',
+            'color_fondo': '#28a745',
+            'mensaje_confirmacion': '¿Está seguro de que desea restaurar el coordinador?',
+            'mensaje_adicional': 'El coordinador volverá a estar activo en el sistema.',
+            'nombre_display': nombre_completo,
+            'boton_texto': 'Restaurar Coordinador',
+            'boton_clase': 'btn-success',
+            'url_cancelar': reverse('listar_coordinadores_inactivos'),
         })
         return context
