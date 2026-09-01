@@ -1,11 +1,12 @@
-{% extends 'index_Servicio.html' %}
+{% extends 'index.html' %}
+{% load custom_filters %}
 
-{% block form_servicio %}
+{% block content %}
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="mb-0">Agregar Nuevo Servicio</h2>
+                    <h2 class="mb-0">{{ titulo }}</h2>
                 </div>
                 <div class="card-body">
                     <form method="post" novalidate>
@@ -14,12 +15,12 @@
                             {{ form.as_p }}
                         </div>
                         <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-accent">Guardar Servicio</button>
-                            <a href="{% url 'listar_servicios' %}" class="btn btn-secondary">Cancelar</a>
+                            <button type="submit" class="btn {{ boton_clase|default:'btn-accent' }}">{{ boton_texto }}</button>
+                            <a href="{{ url_cancelar }}" class="btn btn-secondary">Cancelar</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-{% endblock form_servicio %}
+{% endblock %}

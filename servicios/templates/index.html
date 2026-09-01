@@ -1,14 +1,15 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
-     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{titulo}}</title>
+    <title>{{ titulo }}</title>
 </head>
 <body>
     <!-- Navbar -->
@@ -26,13 +27,23 @@
             </div>
         </div>
     </nav>
+
+    <!-- Messages Django -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <main class="page-section">
         <div class="container">
-        {% block clientes %}
-        {% endblock %}
-    
-        {% block servicios %}
-        {% endblock %}
+            {% block content %}
+            {% endblock %}
         </div>
     </main>
 </body>
