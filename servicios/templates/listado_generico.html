@@ -1,0 +1,81 @@
+{% extends 'index.html' %}
+{% load custom_filters %}
+
+{% block content %}
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>{{ titulo }}</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if boton_principal_url %}
+                <a href="{{ boton_principal_url }}" class="btn btn-accent">{{ boton_principal_texto }}</a>
+            {% endif %}
+        </div>
+    </div>
+ 
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    {% for columna in columnas %}
+                        <th{% if columna.clase %} class="{{ columna.clase }}"{% endif %}>{{ columna.nombre }}</th>
+                    {% endfor %}
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        {% for columna in columnas %}
+                            <td{% if columna.clase %} class="{{ columna.clase }}"{% endif %}>
+                                {% if columna.tipo == 'precio' %}
+                                    ${{ item|get_item:columna.campo }}
+                                {% elif columna.tipo == 'moneda' %}
+                                    ${{ item|get_item:columna.campo }}
+                                {% elif columna.tipo == 'fecha' %}
+                                    {{ item|get_item:columna.campo|date:"d/m/Y" }}
+                                {% else %}
+                                    {{ item|get_item:columna.campo }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                        <td class="text-end">
+                            {% for accion in acciones %}
+                                <a href="{{ accion.url_pattern }}{{ item.pk }}" 
+                                   class="btn btn-sm btn-{{ accion.clase }}">{{ accion.texto }}</a>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="{{ columnas|length|add:1 }}" class="text-center text-muted py-4">
+                            {{ mensaje_vacio }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+ 
+    {% if is_paginated %}
+        <div class="d-flex justify-content-center gap-2 mt-4">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-sm btn-outline-secondary">Primera</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">Anterior</a>
+            {% endif %}
+ 
+            <span class="align-self-center px-3">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+ 
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-secondary">Siguiente</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-outline-secondary">Última</a>
+            {% endif %}
+        </div>
+    {% endif %}
+ 
+    {% if boton_secundario_url %}
+        <div class="mt-5 text-center">
+            <a href="{{ boton_secundario_url }}" class="btn btn-accent">{{ boton_secundario_texto }}</a>
+        </div>
+    {% endif %}
+{% endblock %}
