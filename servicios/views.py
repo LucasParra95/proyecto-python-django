@@ -3,7 +3,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
 from .models import Cliente, Servicio
 from .forms import ClienteForm, ServicioForm
-from django import template
 
 
 ##########CLIENTES VIEWS##########
@@ -191,9 +190,6 @@ class ServicioListView(ListView):
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
-
-    loader = template.engines['django'].engine
-    print(loader.template_libraries)
 
     def get_queryset(self):
         return Servicio.objects.filter(activo=True).order_by('nombre')
