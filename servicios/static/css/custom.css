@@ -59,6 +59,13 @@ body {
   color: var(--secondary-warm) !important;
 }
 
+.navbar-logo {
+    height: 40px !important;
+    width: auto !important;
+    object-fit: contain;
+    margin-right: 10px;
+}
+
 .nav-link {
   color: var(--bg-light) !important;
   transition: color 0.3s ease;
