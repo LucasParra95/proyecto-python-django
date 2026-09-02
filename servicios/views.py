@@ -1,4 +1,4 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
 from .models import Cliente, Servicio, Empleado, Coordinador
@@ -714,3 +714,19 @@ class CoordinadorRestoreView(SuccessMessageMixin, UpdateView):
             'url_cancelar': reverse('listar_coordinadores_inactivos'),
         })
         return context
+
+class HomeView(TemplateView):
+    """Vista principal del home con acceso a todos los módulos."""
+    template_name = 'home.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'titulo': 'Inicio - Servicios de Fiesta',
+            'total_servicios': Servicio.objects.filter(activo=True).count(),
+            'total_clientes': Cliente.objects.filter(activo=True).count(),
+            'total_empleados': Empleado.objects.filter(activo=True).count(),
+            'total_coordinadores': Coordinador.objects.filter(activo=True).count(),
+        })
+        return context
+ 

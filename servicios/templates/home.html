@@ -1,0 +1,106 @@
+{% extends 'index.html' %}
+{% load static %}
+ 
+{% block title %}Inicio - Servicios de Fiesta{% endblock %}
+ 
+{% block content %}
+    <div class="home-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Bienvenido a Grupo Cinco</h1>
+            <p class="hero-subtitle">Donde cada evento toma forma</p>
+        </div>
+    </div>
+ 
+    <section class="services-section py-5">
+        <h2 class="section-title text-center mb-5">Acceso Rápido a Módulos</h2>
+        
+        <div class="row g-4">
+            <!-- Card Servicios -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="{% url 'listar_servicios' %}" class="card-link">
+                    <div class="feature-card">
+                        <div class="card-icon">📋</div>
+                        <h3 class="card-title">Gestión de Servicios</h3>
+                        <p class="card-description">Crea, edita y administra todos los servicios disponibles para tus eventos</p>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </a>
+            </div>
+ 
+            <!-- Card Clientes -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="{% url 'listar_clientes' %}" class="card-link">
+                    <div class="feature-card">
+                        <div class="card-icon">👥</div>
+                        <h3 class="card-title">Gestión de Clientes</h3>
+                        <p class="card-description">Administra información de clientes y sus datos de contacto</p>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </a>
+            </div>
+ 
+            <!-- Card Empleados -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="{% url 'listar_empleados' %}" class="card-link">
+                    <div class="feature-card">
+                        <div class="card-icon">👔</div>
+                        <h3 class="card-title">Gestión de Empleados</h3>
+                        <p class="card-description">Gestiona el personal disponible en el sistema</p>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </a>
+            </div>
+ 
+            <!-- Card Coordinadores -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="{% url 'listar_coordinadores' %}" class="card-link">
+                    <div class="feature-card">
+                        <div class="card-icon">🎯</div>
+                        <h3 class="card-title">Gestión de Coordinadores</h3>
+                        <p class="card-description">Administra los coordinadores de eventos</p>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </a>
+            </div>
+ 
+            <!-- Card Admin Django -->
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="/admin/" class="card-link">
+                    <div class="feature-card">
+                        <div class="card-icon">⚙️</div>
+                        <h3 class="card-title">Panel Administrativo</h3>
+                        <p class="card-description">Acceso a configuraciones avanzadas de Django</p>
+                        <div class="card-arrow">→</div>
+                    </div>
+                </a>
+            </div>
+ 
+            <!-- Card API -->
+
+        </div>
+    </section>
+ 
+    <!-- Stats Section -->
+    <section class="stats-section py-5 mt-5">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h3 class="stat-number">{{ total_servicios }}</h3>
+                    <p class="stat-label">Servicios Activos</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h3 class="stat-number">{{ total_clientes }}</h3>
+                    <p class="stat-label">Clientes Activos</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h3 class="stat-number">{{ total_coordinadores }}</h3>
+                    <p class="stat-label">Coordinadores</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
