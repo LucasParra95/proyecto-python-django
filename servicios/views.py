@@ -1,6 +1,7 @@
 import json
 from django.contrib import messages
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
+from django.http import JsonResponse
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, View
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
 from .models import Cliente, Servicio, Empleado, Coordinador, ReservaServicio
@@ -835,3 +836,29 @@ class ReservaDeleteView(DeleteView):
         context['boton_clase'] = 'btn-danger'
         context['url_cancelar'] = reverse_lazy('listar_reservas')
         return context
+
+class FechasOcupadasView(View):
+
+    def get(self, request, *args, **kwargs):
+        servicios_ids = request.GET.getlist('servicios[]')
+
+        if not servicios_ids:
+            return JsonResponse({
+                'fechas': []
+            })
+
+        fechas = (
+            ReservaServicio.objects
+            .filter(servicios__id__in=servicios_ids)
+            .values_list('fecha_servicio', flat=True)
+            .distinct()
+        )
+
+        fechas_formateadas = [
+            fecha.strftime('%Y-%m-%d')
+            for fecha in fechas
+        ]
+
+        return JsonResponse({
+            'fechas': fechas_formateadas
+        })

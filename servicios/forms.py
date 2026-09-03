@@ -1,4 +1,5 @@
 from django import forms
+from bootstrap_datepicker_plus.widgets import DatePickerInput
 from .models import Cliente, Servicio, Empleado, Coordinador, ReservaServicio
 
 class ClienteForm(forms.ModelForm):
@@ -62,10 +63,15 @@ class ReservaServicioForm(forms.ModelForm):
         model = ReservaServicio
         fields = ['cliente', 'servicios', 'empleado', 'coordinador', 'fecha_servicio']
         widgets = { 
-            'fecha_servicio': forms.DateInput(attrs={
-                'type': 'date',
-                'class': 'form-control'
-            }),
+            'fecha_servicio': DatePickerInput(
+                format='%Y-%m-%d',
+                options={
+                    'format': 'YYYY-MM-DD',
+                    'locale': 'es',
+                    'autoclose': True,
+                    'todayHighlight': True,
+                }
+            ),
             'cliente': forms.Select(attrs={'class': 'form-select'}),
             'servicios': forms.SelectMultiple(attrs={'class': 'form-select'}),
             'empleado': forms.Select(attrs={'class': 'form-select'}),
@@ -81,8 +87,8 @@ class ReservaServicioForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and self.instance.fecha_servicio:
-            self.fields['fecha_servicio'].widget.format = '%Y-%m-%d'
+        # if self.instance and self.instance.pk and self.instance.fecha_servicio:
+        #     self.fields['fecha_servicio'].widget.format = '%Y-%m-%d'
             
         self.fields['cliente'].queryset = Cliente.objects.filter(activo=True)
         self.fields['servicios'].queryset = Servicio.objects.filter(activo=True)
