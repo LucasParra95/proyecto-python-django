@@ -3,25 +3,63 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
 from .models import Cliente, Servicio, Empleado, Coordinador
 from .forms import ClienteForm, ServicioForm, EmpleadoForm, CoordinadorForm
+from django.db.models import Q
 
+class SearchMixin:
+    """
+    Mixin que agrega búsqueda a cualquier ListView.
+    
+    Uso:
+    class MiListView(SearchMixin, ListView):
+        search_fields = ['nombre', 'apellido']
+    """
+    search_fields = []
+    
+    def get_queryset(self):
+        # Obtener el queryset base del modelo
+        queryset = super().get_queryset()
+        
+        # Obtener parámetro de búsqueda
+        query = self.request.GET.get('q', '').strip()
+        
+        # Aplicar filtro si hay query y search_fields definidos
+        if query and self.search_fields:
+            search_query = Q()
+            for field in self.search_fields:
+                # Búsqueda case-insensitive en cada campo
+                search_query |= Q(**{f'{field}__icontains': query})
+            queryset = queryset.filter(search_query)
+        
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Habilitar búsqueda solo si hay campos definidos
+        context['search_enabled'] = bool(self.search_fields)
+        context['search_query'] = self.request.GET.get('q', '')
+        return context
 
 ##########CLIENTES VIEWS##########
 
-class ClienteListView(ListView):
+class ClienteListView(SearchMixin, ListView):
     """Vista para listar todos los clientes activos."""
     model = Cliente
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
+    search_fields = ['nombre', 'apellido']
 
     def get_queryset(self):
-        return Cliente.objects.filter(activo=True).order_by('nombre')
+        queryset = super().get_queryset() 
+        return queryset.filter(activo=True).order_by('nombre')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'base_template': 'index_Cliente.html',
+            'base_template': 'index.html',
             'titulo': 'Listado de Clientes Activos',
+            'search_placeholder': 'Buscar por nombre o apellido...',
+            'url_limpiar_busqueda': reverse('listar_clientes'),
             'boton_principal_texto': 'Agregar Cliente',
             'boton_principal_url': reverse('crear_cliente'),
             'boton_secundario_texto': 'Ver Clientes Inactivos',
@@ -58,7 +96,7 @@ class ClienteCreateView(SuccessMessageMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'base_template': 'index_Cliente.html',
+            'base_template': 'index.html',
             'titulo': 'Agregar Nuevo Cliente',
             'boton_texto': 'Guardar Cliente',
             'boton_clase': 'btn-accent',
@@ -78,7 +116,7 @@ class ClienteUpdateView(SuccessMessageMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'base_template': 'index_Cliente.html',
+            'base_template': 'index.html',
             'titulo': 'Editar Cliente',
             'boton_texto': 'Actualizar Cliente',
             'boton_clase': 'btn-primary',
@@ -104,7 +142,7 @@ class ClienteDeactivateView(SuccessMessageMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         nombre_completo = f"{self.object.nombre} {self.object.apellido}"
         context.update({
-            'base_template': 'index_Cliente.html',
+            'base_template': 'index.html',
             'titulo': 'Confirmar Eliminación',
             'color_alerta': 'danger',
             'color_fondo': '#dc3545',
@@ -118,21 +156,25 @@ class ClienteDeactivateView(SuccessMessageMixin, UpdateView):
         return context
 
 
-class ClienteListInactivateView(ListView):
+class ClienteListInactivateView(SearchMixin, ListView):
     """Vista para listar clientes inactivos."""
     model = Cliente
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
+    search_fields = ['nombre', 'apellido']
 
     def get_queryset(self):
-        return Cliente.objects.filter(activo=False).order_by('nombre')
+        queryset = super().get_queryset() 
+        return queryset.filter(activo=False).order_by('nombre')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'base_template': 'index_Cliente.html',
             'titulo': 'Listado de Clientes Inactivos',
+            'search_placeholder': 'Buscar por nombre o apellido...',
+            'url_limpiar_busqueda': reverse('listar_clientes_inactivos'),
             'boton_principal_texto': 'Volver a Clientes Activos',
             'boton_principal_url': reverse('listar_clientes'),
             'mensaje_vacio': 'No hay clientes inactivos.',
@@ -184,21 +226,25 @@ class ClienteRestoreView(SuccessMessageMixin, UpdateView):
 
 ##########SERVICIOS VIEWS##########
 
-class ServicioListView(ListView):
+class ServicioListView(SearchMixin, ListView):
     """Vista para listar todos los servicios activos."""
     model = Servicio
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
+    search_fields = ['nombre', 'descripcion']
 
     def get_queryset(self):
-        return Servicio.objects.filter(activo=True).order_by('nombre')
+        queryset = super().get_queryset()
+        return queryset.filter(activo=True).order_by('nombre')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'base_template': 'index_Servicio.html',
             'titulo': 'Listado de Servicios Activos',
+            'search_placeholder': 'Buscar por nombre o descripción...',
+            'url_limpiar_busqueda': reverse('listar_servicios'),
             'boton_principal_texto': 'Agregar Servicio',
             'boton_principal_url': reverse('crear_servicio'),
             'boton_secundario_texto': 'Ver Servicios Inactivos',
@@ -295,21 +341,25 @@ class ServicioDeactivateView(SuccessMessageMixin, UpdateView):
         return context
 
 
-class ServicioListInactivateView(ListView):
+class ServicioListInactivateView(SearchMixin, ListView):
     """Vista para listar servicios inactivos."""
     model = Servicio
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
+    search_fields = ['nombre', 'descripcion']
 
     def get_queryset(self):
-        return Servicio.objects.filter(activo=False).order_by('nombre')
+        queryset = super().get_queryset() 
+        return queryset.filter(activo=False).order_by('nombre')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'base_template': 'index_Servicio.html',
             'titulo': 'Listado de Servicios Inactivos',
+            'search_placeholder': 'Buscar por nombre o descripción...',
+            'url_limpiar_busqueda': reverse('listar_servicios_inactivos'),
             'boton_principal_texto': 'Volver a Servicios Activos',
             'boton_principal_url': reverse('listar_servicios'),
             'mensaje_vacio': 'No hay servicios inactivos.',
@@ -360,21 +410,25 @@ class ServicioRestoreView(SuccessMessageMixin, UpdateView):
 
 ########## EMPLEADOS VIEWS ##########
 
-class EmpleadoListView(ListView):
+class EmpleadoListView(SearchMixin, ListView):
     """Vista para listar todos los empleados activos."""
     model = Empleado
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
+    search_fields = ['nombre', 'apellido', 'numero_legajo']
 
     def get_queryset(self):
-        return Empleado.objects.filter(activo=True).order_by('nombre')
+        queryset = super().get_queryset() 
+        return queryset.filter(activo=True).order_by('nombre')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'base_template': 'index_Cliente.html',  # O el index base que utilices
             'titulo': 'Listado de Empleados Activos',
+            'search_placeholder': 'Buscar por nombre, apellido o legajo...',
+            'url_limpiar_busqueda': reverse('listar_empleados'),
             'boton_principal_texto': 'Agregar Empleado',
             'boton_principal_url': reverse('crear_empleado'),
             'boton_secundario_texto': 'Ver Empleados Inactivos',
@@ -472,21 +526,25 @@ class EmpleadoDeactivateView(SuccessMessageMixin, UpdateView):
         return context
 
 
-class EmpleadoListInactivateView(ListView):
+class EmpleadoListInactivateView(SearchMixin, ListView):
     """Vista para listar empleados inactivos."""
     model = Empleado
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
+    search_fields = ['nombre', 'apellido', 'numero_legajo']
 
     def get_queryset(self):
-        return Empleado.objects.filter(activo=False).order_by('nombre')
+        queryset = super().get_queryset() 
+        return queryset.filter(activo=False).order_by('nombre')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'base_template': 'index.html',
             'titulo': 'Listado de Empleados Inactivos',
+            'search_placeholder': 'Buscar por nombre, apellido o legajo...',
+            'url_limpiar_busqueda': reverse('listar_empleados_inactivos'),
             'boton_principal_texto': 'Volver a Empleados Activos',
             'boton_principal_url': reverse('listar_empleados'),
             'mensaje_vacio': 'No hay empleados inactivos.',
@@ -539,21 +597,25 @@ class EmpleadoRestoreView(SuccessMessageMixin, UpdateView):
 
 ########## COORDINADORES VIEWS ##########
 
-class CoordinadorListView(ListView):
+class CoordinadorListView(SearchMixin, ListView):
     """Vista para listar todos los coordinadores activos."""
     model = Coordinador
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
+    search_fields = ['nombre', 'apellido', 'numero_documento']
 
     def get_queryset(self):
-        return Coordinador.objects.filter(activo=True).order_by('nombre')
+        queryset = super().get_queryset()
+        return queryset.filter(activo=True).order_by('nombre')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'base_template': 'index_Cliente.html',
             'titulo': 'Listado de Coordinadores Activos',
+            'search_placeholder': 'Buscar por nombre, apellido o documento...',
+            'url_limpiar_busqueda': reverse('listar_coordinadores'),
             'boton_principal_texto': 'Agregar Coordinador',
             'boton_principal_url': reverse('crear_coordinador'),
             'boton_secundario_texto': 'Ver Coordinadores Inactivos',
@@ -651,21 +713,26 @@ class CoordinadorDeactivateView(SuccessMessageMixin, UpdateView):
         return context
 
 
-class CoordinadorListInactivateView(ListView):
+class CoordinadorListInactivateView(SearchMixin, ListView):
     """Vista para listar coordinadores inactivos."""
     model = Coordinador
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     paginate_by = 20
+    search_fields = ['nombre', 'apellido', 'numero_documento']
+
 
     def get_queryset(self):
-        return Coordinador.objects.filter(activo=False).order_by('nombre')
+        queryset = super().get_queryset() 
+        return queryset.filter(activo=False).order_by('nombre')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'base_template': 'index_Cliente.html',
             'titulo': 'Listado de Coordinadores Inactivos',
+            'search_placeholder': 'Buscar por nombre, apellido o documento...',
+            'url_limpiar_busqueda': reverse('listar_coordinadores_inactivos'),
             'boton_principal_texto': 'Volver a Coordinadores Activos',
             'boton_principal_url': reverse('listar_coordinadores'),
             'mensaje_vacio': 'No hay coordinadores inactivos.',

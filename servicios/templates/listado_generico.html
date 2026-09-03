@@ -7,6 +7,17 @@
             <h2>{{ titulo }}</h2>
         </div>
         <div class="col-md-4 text-end">
+            {% if search_enabled %}
+                <form method="get" class="input-group">
+                    <input type="text" name="q" class="form-control" 
+                        placeholder="🔍 {{ search_placeholder }}"
+                        value="{{ request.GET.q }}">
+                    <button class="btn btn-outline-secondary">Buscar</button>
+                    {% if request.GET.q %}
+                        <a href={{ url_limpiar_busqueda }} class="btn btn-outline-secondary">Limpiar</a>
+                    {% endif %}
+                </form>
+            {% endif %}
             {% if boton_principal_url %}
                 <a href="{{ boton_principal_url }}" class="btn btn-accent">{{ boton_principal_texto }}</a>
             {% endif %}
