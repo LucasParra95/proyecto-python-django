@@ -751,7 +751,7 @@ class ReservaListView(ListView):
         context['mensaje_vacio'] = 'No hay reservas registradas en el sistema.'
         
         context['boton_principal_url'] = reverse_lazy('crear_reserva')
-        context['boton_principal_texto'] = '➕ Nueva Reserva'
+        context['boton_principal_texto'] = 'Nueva Reserva'
 
         context['columnas'] = [
             {'nombre': 'ID', 'campo': 'pk'},
@@ -764,7 +764,7 @@ class ReservaListView(ListView):
         ]
 
         context['acciones'] = [
-            {'url_pattern': '/servicios/reservas/editar/', 'clase': 'warning', 'texto': 'Editar'},
+            {'url_pattern': '/servicios/reservas/editar/', 'clase': 'primary', 'texto': 'Editar'},
             {'url_pattern': '/servicios/reservas/eliminar/', 'clase': 'danger', 'texto': 'Eliminar'},
         ]
         
