@@ -4,7 +4,6 @@ from django.urls import reverse_lazy, reverse
 from .models import Cliente, Servicio, Empleado, Coordinador
 from .forms import ClienteForm, ServicioForm, EmpleadoForm, CoordinadorForm
 
-
 ##########CLIENTES VIEWS##########
 
 class ClienteListView(ListView):
