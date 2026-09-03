@@ -22,6 +22,9 @@ class Cliente(models.Model):
         default=True,
         help_text="Indica si el cliente está activo"
     )
+
+    def __str__(self):
+        return f"{self.nombre} {self.apellido}"
     
 class Servicio(models.Model):
     """Modelo para gestionar Servicios"""
@@ -46,6 +49,9 @@ class Servicio(models.Model):
     activo = models.BooleanField(
         default=True,
         help_text="Indica si el servicio esta activo")
+    
+    def __str__(self):
+        return f"{self.nombre} - ${self.precio}"
 
 class Empleado(models.Model):
     """Modelo para gestionar Empleados"""
@@ -110,24 +116,23 @@ class Coordinador(models.Model):
 
 
 class ReservaServicio(models.Model):
-    """Modelo para gestionar las Reservas de Servicios"""
     cliente = models.ForeignKey(
         Cliente,
         on_delete=models.CASCADE,
         related_name='reservas',
         help_text="Cliente que realiza la reserva"
     )
-    servicio = models.ForeignKey(
+    # muchos a muchos para elegir varios servicios
+    servicios = models.ManyToManyField(
         Servicio,
-        on_delete=models.CASCADE,
         related_name='reservas',
-        help_text="Servicio reservado"
+        help_text="Servicios incluidos en la reserva"
     )
     empleado = models.ForeignKey(
         Empleado,
         on_delete=models.CASCADE,
         related_name='reservas',
-        help_text="Empleado asignado a la reserva"
+        help_text="Empleado que toma la reserva"
     )
     coordinador = models.ForeignKey(
         Coordinador,
@@ -143,5 +148,14 @@ class ReservaServicio(models.Model):
         help_text="Fecha solicitada para el evento/servicio"
     )
 
-    def __str__(self):
-        return f"Reserva #{self.id} - {self.cliente} ({self.servicio})"
+    # Propiedad para que el get_item del template genérico pueda mostrar los servicios contratados
+    @property
+    def servicios_str(self):
+        servicios_list = self.servicios.values_list('nombre', flat=True)
+        return ", ".join(servicios_list) if servicios_list else "Sin servicios"
+
+    # Propiedad para calcular el precio total acumulado
+    @property
+    def total_reserva(self):
+        total = sum(s.precio for s in self.servicios.all())
+        return total

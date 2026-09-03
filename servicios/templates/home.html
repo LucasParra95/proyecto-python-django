@@ -15,6 +15,21 @@
         <h2 class="section-title text-center mb-5">Acceso Rápido a Módulos</h2>
         
         <div class="row g-4">
+            
+            <!-- Card Principal Destacada: Gestión de Reservas -->
+            <div class="col-12">
+                <a href="{% url 'listar_reservas' %}" class="card-link">
+                    <div class="feature-card border border-primary border-2 shadow-lg p-4 text-center">
+                        <div class="card-icon fs-1 mb-2">🎉</div>
+                        <h3 class="card-title text-primary fw-bold">Gestión de Reservas</h3>
+                        <p class="card-description fs-5">
+                            Modulo Principal: Agenda eventos, selecciona clientes y asocia múltiples servicios, empleados y coordinadores.
+                        </p>
+                        <div class="card-arrow fs-3 fw-bold">Agendar o Consultar Reservas →</div>
+                    </div>
+                </a>
+            </div>
+
             <!-- Card Servicios -->
             <div class="col-12 col-md-6 col-lg-4">
                 <a href="{% url 'listar_servicios' %}" class="card-link">

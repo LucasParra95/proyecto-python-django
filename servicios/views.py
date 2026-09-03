@@ -1,8 +1,10 @@
+import json
+from django.contrib import messages
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy, reverse
-from .models import Cliente, Servicio, Empleado, Coordinador
-from .forms import ClienteForm, ServicioForm, EmpleadoForm, CoordinadorForm
+from .models import Cliente, Servicio, Empleado, Coordinador, ReservaServicio
+from .forms import ClienteForm, ServicioForm, EmpleadoForm, CoordinadorForm, ReservaServicioForm
 
 
 ##########CLIENTES VIEWS##########
@@ -730,3 +732,106 @@ class HomeView(TemplateView):
         })
         return context
  
+# --- LISTADO DE RESERVAS ---
+class ReservaListView(ListView):
+    model = ReservaServicio
+    template_name = 'listado_generico.html'
+    context_object_name = 'items'
+    ordering = ['-fecha_servicio']
+
+    def get_queryset(self):
+        return ReservaServicio.objects.select_related(
+            'cliente', 'empleado', 'coordinador'
+        ).prefetch_related('servicios').all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        context['titulo'] = 'Gestión de Reservas de Servicios'
+        context['mensaje_vacio'] = 'No hay reservas registradas en el sistema.'
+        
+        context['boton_principal_url'] = reverse_lazy('crear_reserva')
+        context['boton_principal_texto'] = '➕ Nueva Reserva'
+
+        context['columnas'] = [
+            {'nombre': 'ID', 'campo': 'pk'},
+            {'nombre': 'Cliente', 'campo': 'cliente'},
+            {'nombre': 'Servicios Contratados', 'campo': 'servicios_str'},
+            {'nombre': 'Total', 'campo': 'total_reserva', 'tipo': 'precio'},
+            {'nombre': 'Empleado', 'campo': 'empleado'},
+            {'nombre': 'Coordinador', 'campo': 'coordinador'},
+            {'nombre': 'Fecha Evento', 'campo': 'fecha_servicio', 'tipo': 'fecha'},
+        ]
+
+        context['acciones'] = [
+            {'url_pattern': '/servicios/reservas/editar/', 'clase': 'warning', 'texto': 'Editar'},
+            {'url_pattern': '/servicios/reservas/eliminar/', 'clase': 'danger', 'texto': 'Eliminar'},
+        ]
+        
+        return context
+
+
+# --- CREAR RESERVA ---
+class ReservaCreateView(CreateView):
+    model = ReservaServicio
+    form_class = ReservaServicioForm
+    template_name = 'reserva.html'  # Reutiliza el HTML de formulario genérico
+    success_url = reverse_lazy('listar_reservas')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Registrar Nueva Reserva de Servicios'
+        context['boton_texto'] = 'Guardar Reserva'
+        context['boton_clase'] = 'btn-primary'
+        context['url_cancelar'] = reverse_lazy('listar_reservas')
+        
+        precios = {str(s.id): float(s.precio) for s in Servicio.objects.all()}
+        context['precios_servicios_json'] = json.dumps(precios)
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Reserva creada exitosamente con los servicios seleccionados.")
+        return super().form_valid(form)
+
+
+# --- EDITAR RESERVA ---
+class ReservaUpdateView(UpdateView):
+    model = ReservaServicio
+    form_class = ReservaServicioForm
+    template_name = 'reserva.html'  # Reutiliza el HTML de formulario genérico
+    success_url = reverse_lazy('listar_reservas')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = f'Editar Reserva #{self.object.pk}'
+        context['boton_texto'] = 'Actualizar Reserva'
+        context['boton_clase'] = 'btn-warning'
+        context['url_cancelar'] = reverse_lazy('listar_reservas')
+        
+        precios = {str(s.id): float(s.precio) for s in Servicio.objects.all()}
+        context['precios_servicios_json'] = json.dumps(precios)
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Reserva actualizada correctamente.")
+        return super().form_valid(form)
+
+
+# --- ELIMINAR RESERVA ---
+class ReservaDeleteView(DeleteView):
+    model = ReservaServicio
+    template_name = 'confirmar_accion.html'  # Reutiliza el HTML de eliminación genérico
+    success_url = reverse_lazy('listar_reservas')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Eliminar Reserva'
+        context['color_alerta'] = 'danger'
+        context['color_fondo'] = '#dc3545'
+        context['mensaje_confirmacion'] = '¿Estás seguro de que deseas cancelar/eliminar esta reserva?'
+        context['nombre_display'] = f"Reserva #{self.object.pk} - Cliente: {self.object.cliente}"
+        context['mensaje_adicional'] = 'Esta acción desvinculará los servicios asociados y no se podrá deshacer.'
+        context['boton_texto'] = 'Sí, Eliminar'
+        context['boton_clase'] = 'btn-danger'
+        context['url_cancelar'] = reverse_lazy('listar_reservas')
+        return context

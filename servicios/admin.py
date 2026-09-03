@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cliente, Servicio, Empleado, Coordinador
+from .models import Cliente, Servicio, Empleado, Coordinador, ReservaServicio
 
 
 @admin.register(Servicio) #registra el modelo en el panel del admin
@@ -30,3 +30,15 @@ class CoordinadorAdmin(admin.ModelAdmin):
     list_filter = ("activo", "numero_documento")
     search_fields = ("nombre", "apellido")
     ordering = ("apellido", "nombre")
+
+
+@admin.register(ReservaServicio)
+class ReservaServicioAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cliente', 'empleado', 'coordinador', 'fecha_servicio', 'fecha_reserva')
+    filter_horizontal = ('servicios',)  # Interfaz cómoda para seleccionar varios servicios
+    list_filter = ('fecha_servicio',)
+    search_fields = (
+        'cliente__nombre', 'cliente__apellido',
+        'empleado__nombre', 'empleado__apellido',
+        'coordinador__nombre', 'coordinador__apellido'
+    )
