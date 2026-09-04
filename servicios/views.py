@@ -801,23 +801,27 @@ class HomeView(TemplateView):
         return context
  
 # --- LISTADO DE RESERVAS ---
-class ReservaListView(ListView):
+class ReservaListView(SearchMixin, ListView):
     model = ReservaServicio
     template_name = 'listado_generico.html'
     context_object_name = 'items'
     ordering = ['fecha_servicio']
+    search_fields = ['fecha_servicio', 'cliente__nombre', 'cliente__apellido', 'servicios__nombre', 'empleado__nombre', 'empleado__apellido', 'coordinador__nombre', 'coordinador__apellido']
 
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.select_related(
             'cliente', 'empleado', 'coordinador'
-        ).prefetch_related('servicios').all()
+        ).prefetch_related('servicios').distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
         context['titulo'] = 'Gestión de Reservas de Servicios'
         context['mensaje_vacio'] = 'No hay reservas registradas en el sistema.'
+        context['search_enabled'] = True
+        context['search_placeholder'] = 'Buscar por fecha, cliente, servicios, empleado o coordinador...'
+        context['url_limpiar_busqueda'] = reverse_lazy('listar_reservas')
         
         context['boton_principal_url'] = reverse_lazy('crear_reserva')
         context['boton_principal_texto'] = 'Nueva Reserva'
