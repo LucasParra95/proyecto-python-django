@@ -737,10 +737,11 @@ class ReservaListView(ListView):
     model = ReservaServicio
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    ordering = ['-fecha_servicio']
+    ordering = ['fecha_servicio']
 
     def get_queryset(self):
-        return ReservaServicio.objects.select_related(
+        queryset = super().get_queryset()
+        return queryset.select_related(
             'cliente', 'empleado', 'coordinador'
         ).prefetch_related('servicios').all()
 
@@ -754,13 +755,13 @@ class ReservaListView(ListView):
         context['boton_principal_texto'] = 'Nueva Reserva'
 
         context['columnas'] = [
-            {'nombre': 'ID', 'campo': 'pk'},
+            {'nombre': 'Fecha Evento', 'campo': 'fecha_servicio', 'tipo': 'fecha'},
             {'nombre': 'Cliente', 'campo': 'cliente'},
             {'nombre': 'Servicios Contratados', 'campo': 'servicios_str'},
             {'nombre': 'Total', 'campo': 'total_reserva', 'tipo': 'precio'},
             {'nombre': 'Empleado', 'campo': 'empleado'},
             {'nombre': 'Coordinador', 'campo': 'coordinador'},
-            {'nombre': 'Fecha Evento', 'campo': 'fecha_servicio', 'tipo': 'fecha'},
+            {'nombre': 'ID', 'campo': 'pk'},
         ]
 
         context['acciones'] = [
