@@ -33,4 +33,13 @@ urlpatterns = [
     path('coordinadores/baja/<int:pk>', views.CoordinadorDeactivateView.as_view(), name='baja_coordinador'),
     path('coordinadores/inactivos', views.CoordinadorListInactivateView.as_view(), name='listar_coordinadores_inactivos'),
     path('coordinadores/inactivos/restaurar/<int:pk>', views.CoordinadorRestoreView.as_view(), name='restaurar_coordinador'),
+
+    # --- RESERVAS ---
+    path('reservas', views.ReservaListView.as_view(), name='listar_reservas'),
+    path('reservas/nueva', views.ReservaCreateView.as_view(), name='crear_reserva'),
+    path('reservas/editar/<int:pk>', views.ReservaUpdateView.as_view(), name='editar_reserva'),
+    path('reservas/eliminar/<int:pk>', views.ReservaDeleteView.as_view(), name='eliminar_reserva'),
+
+    # --- FECHAS OCUPADAS ---
+    path('reservas/fechas_ocupadas/', views.FechasOcupadasView.as_view(), name='fechas_ocupadas'),
 ]
