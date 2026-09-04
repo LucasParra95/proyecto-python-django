@@ -64,12 +64,14 @@ class ReservaServicioForm(forms.ModelForm):
         fields = ['cliente', 'servicios', 'empleado', 'coordinador', 'fecha_servicio']
         widgets = { 
             'fecha_servicio': DatePickerInput(
-                format='%Y-%m-%d',
                 options={
-                    'format': 'YYYY-MM-DD',
+                    'format': 'DD/MM/YYYY',
                     'locale': 'es',
-                    'autoclose': True,
-                    'todayHighlight': True,
+                    'showTodayButton': True,
+                    'showClear': True,
+                    'inline': True,
+                    'keepOpen': True,
+                    'focusOnShow': False,
                 }
             ),
             'cliente': forms.Select(attrs={'class': 'form-select'}),

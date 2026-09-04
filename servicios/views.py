@@ -849,8 +849,13 @@ class FechasOcupadasView(View):
 
         fechas = (
             ReservaServicio.objects
-            .filter(servicios__id__in=servicios_ids)
-            .values_list('fecha_servicio', flat=True)
+            .filter(
+                servicios__id__in=servicios_ids
+            )
+            .values_list(
+                'fecha_servicio',
+                flat=True
+            )
             .distinct()
         )
 

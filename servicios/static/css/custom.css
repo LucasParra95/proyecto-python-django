@@ -500,4 +500,44 @@ a:hover {
         padding: 1rem;
     }
 }
- 
+
+#id_fecha_servicio {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+#id_fecha_servicio + .input-group-addon,
+#id_fecha_servicio + .input-group-append {
+    display: none !important;
+}
+
+.input-group.dbdp {
+    display: block !important;
+    width: 100% !important;
+    border: none !important;
+}
+
+.input-group.dbdp .bootstrap-datetimepicker-widget {
+    position: static !important;
+    width: max-content !important;
+    min-width: 300px !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+}
+
+/* Fechas ocupadas del calendario */
+.bootstrap-datetimepicker-widget table td.disabled,
+.bootstrap-datetimepicker-widget table td.disabled:hover {
+    background-color: #f8d7da !important;
+    color: #842029 !important;
+    opacity: 1 !important;
+    border-radius: 4px;
+    cursor: not-allowed;
+}
