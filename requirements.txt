@@ -2,3 +2,5 @@ asgiref==3.12.1
 Django==6.1
 django-bootstrap5==26.2
 sqlparse==0.6.0
+django-bootstrap-datepicker-plus==6.0.0
+djangorestframework==3.18.0
