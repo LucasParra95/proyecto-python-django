@@ -49,7 +49,7 @@ class ClienteListView(SearchMixin, ListView):
     model = Cliente
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    paginate_by = 20
+    paginate_by = 10
     search_fields = ['nombre', 'apellido']
 
     def get_queryset(self):
@@ -164,7 +164,7 @@ class ClienteListInactivateView(SearchMixin, ListView):
     model = Cliente
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    paginate_by = 20
+    paginate_by = 10
     search_fields = ['nombre', 'apellido']
 
     def get_queryset(self):
@@ -234,7 +234,7 @@ class ServicioListView(SearchMixin, ListView):
     model = Servicio
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    paginate_by = 20
+    paginate_by = 10
     search_fields = ['nombre', 'descripcion']
 
     def get_queryset(self):
@@ -349,7 +349,7 @@ class ServicioListInactivateView(SearchMixin, ListView):
     model = Servicio
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    paginate_by = 20
+    paginate_by = 10
     search_fields = ['nombre', 'descripcion']
 
     def get_queryset(self):
@@ -418,7 +418,7 @@ class EmpleadoListView(SearchMixin, ListView):
     model = Empleado
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    paginate_by = 20
+    paginate_by = 10
     search_fields = ['nombre', 'apellido', 'numero_legajo']
 
     def get_queryset(self):
@@ -534,7 +534,7 @@ class EmpleadoListInactivateView(SearchMixin, ListView):
     model = Empleado
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    paginate_by = 20
+    paginate_by = 10
     search_fields = ['nombre', 'apellido', 'numero_legajo']
 
     def get_queryset(self):
@@ -605,7 +605,7 @@ class CoordinadorListView(SearchMixin, ListView):
     model = Coordinador
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    paginate_by = 20
+    paginate_by = 10
     search_fields = ['nombre', 'apellido', 'numero_documento']
 
     def get_queryset(self):
@@ -721,7 +721,7 @@ class CoordinadorListInactivateView(SearchMixin, ListView):
     model = Coordinador
     template_name = 'listado_generico.html'
     context_object_name = 'items'
-    paginate_by = 20
+    paginate_by = 10
     search_fields = ['nombre', 'apellido', 'numero_documento']
 
 
