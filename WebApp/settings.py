@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'servicios',
     'rest_framework',
     'api',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -129,4 +130,15 @@ MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API de Servicios - G5',
+    'DESCRIPTION': 'Los siguientes endpoints sirven para brindar información de todos los servicios que ofrece la empresa.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,  # oculta el link "schema" en Swagger UI
 }
