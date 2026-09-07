@@ -147,6 +147,10 @@ class ReservaServicio(models.Model):
     fecha_servicio = models.DateField(
         help_text="Fecha solicitada para el evento/servicio"
     )
+    
+    class Meta:
+                verbose_name = "Coordinador"
+                verbose_name_plural = "Coordinadores"
 
     # Propiedad para que el get_item del template genérico pueda mostrar los servicios contratados
     @property

@@ -27,6 +27,7 @@ El proyecto fue desarrollado de manera grupal en el marco de **Alkemy**.
 - **Python**
 - **Django 6.1**
 - **Django REST Framework 3.18.0**
+- **drf-spectacular** — documentación de la API mediante OpenAPI, Swagger UI y ReDoc.
 - **django-bootstrap5 26.2**
 - **django-bootstrap-datepicker-plus 6.0.0**
 - **SQLite**
@@ -406,6 +407,35 @@ path('api/', include("api.urls")),
 
 Actualmente la API es **de solo consulta** y cuenta con dos endpoints.
 
+### Documentación de la API
+
+La API cuenta con documentación interactiva generada automáticamente mediante **drf-spectacular**, utilizando el estándar **OpenAPI**.
+
+La documentación está disponible en los siguientes endpoints, con el servidor local iniciado:
+
+| Recurso | Ruta | Descripción |
+|---|---|---|
+| Swagger UI | `/api/docs/` | Interfaz web interactiva para consultar y probar los endpoints. |
+| ReDoc | `/api/redoc/` | Interfaz alternativa para visualizar la documentación de la API. |
+
+Por ejemplo:
+
+```text
+http://127.0.0.1:8000/api/docs/
+```
+
+La documentación de Swagger permite visualizar los endpoints disponibles, sus métodos HTTP, parámetros y respuestas, y realizar consultas directamente desde la interfaz.
+
+La configuración principal de la documentación se encuentra en `settings.py` y utiliza `drf_spectacular.openapi.AutoSchema` como clase de generación del esquema.
+
+```python
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+```
+
+La información general mostrada en la documentación se configura mediante `SPECTACULAR_SETTINGS`, incluyendo el título **API de Servicios - G5**, su descripción y la versión `1.0.0`.
+
 ### Listar servicios
 
 ```http
@@ -476,6 +506,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('servicios/', include("servicios.urls")),
     path('api/', include("api.urls")),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 ```
 
@@ -484,6 +516,8 @@ Esto separa la aplicación web tradicional de la API REST:
 ```text
 /servicios/    → Interfaz web de gestión
 /api/          → API REST
+/api/docs/     → Documentación Swagger UI
+/api/redoc/    → Documentación ReDoc
 /admin/        → Panel de administración de Django
 ```
 
