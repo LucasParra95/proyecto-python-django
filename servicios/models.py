@@ -111,6 +111,10 @@ class Coordinador(models.Model):
         help_text="Indica si el coordinador está activo"
     )
 
+    class Meta:
+        verbose_name = "Coordinador"
+        verbose_name_plural = "Coordinadores"
+
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
 
@@ -147,10 +151,6 @@ class ReservaServicio(models.Model):
     fecha_servicio = models.DateField(
         help_text="Fecha solicitada para el evento/servicio"
     )
-    
-    class Meta:
-                verbose_name = "Coordinador"
-                verbose_name_plural = "Coordinadores"
 
     # Propiedad para que el get_item del template genérico pueda mostrar los servicios contratados
     @property
