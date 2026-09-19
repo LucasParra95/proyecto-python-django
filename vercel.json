@@ -2,6 +2,6 @@
   "buildCommand": "pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput",
   "outputDirectory": ".",
   "env": {
-    "DJANGO_SETTINGS_MODULE": "StockControl.settings"
+    "DJANGO_SETTINGS_MODULE": "WebApp.settings"
   }
 }
