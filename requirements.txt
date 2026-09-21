@@ -10,6 +10,7 @@ gunicorn==26.2.0
 inflection==0.5.1
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
+psycopg[binary]==3.3.6
 pydantic==2.13.5
 pydantic-settings==2.15.0
 pydantic_core==2.46.5
